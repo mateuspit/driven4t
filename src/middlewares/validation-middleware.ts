@@ -3,26 +3,31 @@ import httpStatus from 'http-status';
 import { ObjectSchema } from 'joi';
 import { invalidDataError } from '@/errors';
 
+export function validateRoom(schema: ObjectSchema<T>) {
+    return validate(schema, 'room');
+}
+
 export function validateBody<T>(schema: ObjectSchema<T>): ValidationMiddleware {
-  return validate(schema, 'body');
+    return validate(schema, 'body');
 }
 
 export function validateParams<T>(schema: ObjectSchema<T>): ValidationMiddleware {
-  return validate(schema, 'params');
+    return validate(schema, 'params');
 }
 
-function validate(schema: ObjectSchema, type: 'body' | 'params') {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const { error } = schema.validate(req[type], {
-      abortEarly: false,
-    });
+function validate(schema: ObjectSchema, type: 'body' | 'params' | 'room') {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const { error } = schema.validate(req[type as keyof typeof req], {
+            abortEarly: false,
+        });
 
-    if (!error) {
-      next();
-    } else {
-      res.status(httpStatus.BAD_REQUEST).send(invalidDataError(error.details.map((d) => d.message)));
-    }
-  };
+        if (!error) {
+            next();
+        } else {
+            res.status(httpStatus.BAD_REQUEST).send(invalidDataError(error.details.map((d) => d.message)));
+        }
+    };
 }
+
 
 type ValidationMiddleware = (req: Request, res: Response, next: NextFunction) => void;
