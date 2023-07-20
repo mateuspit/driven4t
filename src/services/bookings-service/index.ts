@@ -21,9 +21,9 @@ async function makeBookingService(userId: number, roomId: number) {
     if (ticket.status !== 'PAID' ||
         ticket.TicketType.isRemote ||
         !ticket.TicketType.includesHotel) {
-        console.log("ticket.status",ticket.status!=='PAID');
-        console.log("ticket.isRemote",!!ticket.TicketType.isRemote);
-        console.log("ticket.includesHotel",!ticket.TicketType.includesHotel);
+        //console.log("ticket.status",ticket.status!=='PAID');
+        //console.log("ticket.isRemote",!!ticket.TicketType.isRemote);
+        //console.log("ticket.includesHotel",!ticket.TicketType.includesHotel);
         throw Error("FORBIDDEN");
     }
 
@@ -34,7 +34,9 @@ async function makeBookingService(userId: number, roomId: number) {
 
 
     const capacityExists = await capacityExistsFunc(roomId);
+    //console.log("capacityExists", capacityExists)
     if (!capacityExists) {
+        //console.log("capacityExists:error", capacityExists)
         throw Error("FORBIDDEN");
     }
 
@@ -51,14 +53,14 @@ async function changeBookingService(userId: number, roomId: number) {
         throw Error("FORBIDDEN");
     }
 
-    const capacityExists = await capacityExistsFunc(roomId);
-    if (!capacityExists) {
-        throw Error("FORBIDDEN");
-    }
-
     const roomExists = await roomExistsFunc(roomId);
     if (!roomExists || roomExists.id === null) {
         throw notFoundError();
+    }
+
+    const capacityExists = await capacityExistsFunc(roomId);
+    if (!capacityExists) {
+        throw Error("FORBIDDEN");
     }
 
     const bookingId = await bookingRepository.changeBookingRepository(roomId, userId);//duvida
@@ -80,6 +82,8 @@ async function capacityExistsFunc(roomId: number) {
     const { capacity } = await roomExistsFunc(roomId);
 
     const currentRents = await bookingRepository.currentRentsRepository(roomId);
-
-    return (capacity <= currentRents);
+    //console.log("capacity.ExistsFunc,capacity", capacity);
+    //console.log("capacity.ExistsFunc,currentRents", currentRents);
+    //console.log("capacity.ExistsFunc,capacity <= currentRents", capacity > currentRents);
+    return (capacity > currentRents);
 }

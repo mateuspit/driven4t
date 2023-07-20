@@ -16,3 +16,51 @@ export async function createBookingData(userId: number, roomId: number) {
         data: bookingData,
     });
 }
+
+export async function createRoom(hotelId: number) {
+    const roomData = {
+        name: "faker.name",
+        //name: faker.name,
+        capacity: faker.datatype.number({ min: 1, max: 7 }),
+        hotelId,
+        createdAt: faker.date.recent(),
+        updatedAt: new Date(),
+    };
+
+    const createdRoom = await prisma.room.create({
+        data: roomData,
+    });
+
+    return createdRoom;
+}
+
+export async function createBooking(userId: number, roomId: number) {
+    const bookingData = {
+        userId: userId,
+        roomId: roomId,
+        createdAt: faker.date.recent(),
+        updatedAt: new Date(),
+    };
+
+    const createdBooking = await prisma.booking.create({
+        data: bookingData,
+    });
+
+    return createdBooking;
+}
+
+export async function createBookingWithoutCapacity(userId: number, roomId: number, capacity: number) {
+    for (let i = 0; i < capacity; i++) {
+        const bookingData = {
+            userId: userId,
+            roomId: roomId,
+            createdAt: faker.date.recent(),
+            updatedAt: new Date(),
+        };
+
+        //const createdBooking = await prisma.booking.create({
+        await prisma.booking.create({
+            data: bookingData,
+        });
+    }
+}
