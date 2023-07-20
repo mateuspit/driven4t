@@ -49,16 +49,21 @@ describe('GET /booking', () => {
         const response = await server.get('/booking').set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(httpStatus.NOT_FOUND);
-    });
+    });//done
 
     it('Retorna status 200 e informações da reserva no sucesso?', async () => {
-        const userWithoutSession = await createUser();
-        const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
+        const user = await createUser();
+        const token = await generateValidToken(user);
 
-        const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+        const createdHotel = await createHotel();
+        const createdRoom = await createRoomWithHotelId(createdHotel.id);
 
-        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
-    });
+        await createBookingData(user.id, createdRoom.id);
+
+        const response = await server.get('/booking').set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(httpStatus.OK);
+    });//done
 });
 
 describe('POST /booking', () => {
