@@ -101,13 +101,20 @@ describe('POST /booking', () => {
 
 
         expect(response.status).toBe(httpStatus.FORBIDDEN);
-    });
+    });//done
 
     it('Retorna status 403 se o ticket do usuário não foi pago?', async () => {
-        const response = await server.get('/hotels');
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const enrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketTypeWithHotel();
+        await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
-        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
-    });
+        const response = await server.post('/booking').set('Authorization', `Bearer ${token}`);
+
+
+        expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });//done
 
     it('Retorna status 403 se o quarto não possui vagas?', async () => {
         const token = faker.lorem.word();
