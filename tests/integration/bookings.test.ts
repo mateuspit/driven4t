@@ -13,6 +13,7 @@ import {
     createTicketTypeRemote,
     createTicketTypeWithHotel,
     createUser,
+    createBookingData
 } from '../factories';
 import app, { init } from '@/app';
 
@@ -37,11 +38,17 @@ describe('GET /booking', () => {
     });//done
 
     it('Retorna status 404 se o usuário não tem reservas?', async () => {
-        const token = faker.lorem.word();
+        const user = await createUser();
+        const token = await generateValidToken(user);
 
-        const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+        const createdHotel = await createHotel();
+        await createRoomWithHotelId(createdHotel.id);
 
-        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+        //await createBookingData(user.id, createdRoom.id);
+
+        const response = await server.get('/booking').set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
 
     it('Retorna status 200 e informações da reserva no sucesso?', async () => {
