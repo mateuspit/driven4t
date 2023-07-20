@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import { ObjectSchema } from 'joi';
 import { invalidDataError } from '@/errors';
 
-export function validateRoom(schema: ObjectSchema<T>) {
+export function validateRoom(schema: ObjectSchema) {
     return validate(schema, 'room');
 }
 
