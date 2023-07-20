@@ -22,7 +22,7 @@ export async function makeBookingController(req: AuthenticatedRequest, res: Resp
         const bookingId = await bookingService.makeBookingService(userId, roomId);
         return res.status(httpStatus.OK).send(bookingId);
     } catch (e) {
-        if (e.message === 'FORBIDDEND') {
+        if (e.message === 'FORBIDDEN') {
             return res.sendStatus(httpStatus.FORBIDDEN);
         }
         if (e.name === 'NotFoundError') {

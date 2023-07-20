@@ -13,10 +13,17 @@ async function viewBookingService(userId: number) {
 
 async function makeBookingService(userId: number, roomId: number) {
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+    //console.log("makeBookingService:enrollment");
     const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
+    //console.log("makeBookingService:ticket");
+    //console.log("ticket", ticket);
+    //console.log("TicketType", ticket.TicketType.isRemote);
     if (ticket.status !== 'PAID' ||
         ticket.TicketType.isRemote ||
         !ticket.TicketType.includesHotel) {
+        console.log("ticket.status",ticket.status!=='PAID');
+        console.log("ticket.isRemote",!!ticket.TicketType.isRemote);
+        console.log("ticket.includesHotel",!ticket.TicketType.includesHotel);
         throw Error("FORBIDDEN");
     }
 
