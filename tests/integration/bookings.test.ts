@@ -138,25 +138,28 @@ describe('POST /booking', () => {
         expect(response.status).toBe(httpStatus.FORBIDDEN);
     });//done
 
-    //it('Retorna status 404 se o quarto não existe?', async () => {
-    //    const user = await createUser();
-    //    const token = await generateValidToken(user);
-    //    const enrollment = await createEnrollmentWithAddress(user);
-    //    const ticketType = await createTicketTypeWithHotel();
-    //    await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-    //    const hotel = await createHotel();
-    //    const room = await createRoom(hotel.id);
-    //    const body = { roomId: room.id };
-    //    const roomsNumber = await searchingHowManyRooms((body.roomId + 1));
-    //    //await createBookingWithoutCapacity(user.id, room.id, room.capacity)
-    //    await createBooking(user.id, room.id);
+    it('Retorna status 404 se o quarto não existe?', async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const enrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketTypeWithHotel();
+        await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+        const hotel = await createHotel();
+        const room = await createRoom(hotel.id);
+        const body = { roomId: (room.id + 99) };
+        const roomsNumber = await searchingHowManyRooms((body.roomId + 1));
+        //await createBookingWithoutCapacity(user.id, room.id, room.capacity)
+        //await createBooking(user.id, room.id);
 
 
-    //    const response = await server.post('/booking').set('Authorization', `Bearer ${token}`);
+        const response = await server
+            .post('/booking')
+            .set('Authorization', `Bearer ${token}`)
+            .send(body);
 
-    //    expect(roomsNumber).toBe(0);
-    //    expect(response.status).toBe(httpStatus.FORBIDDEN);
-    //});
+        expect(roomsNumber).toBe(0);
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
 
     it('Retorna status 200 e o id da reserva no sucesso?', async () => {
         const user = await createUser();
