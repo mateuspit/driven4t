@@ -37,7 +37,7 @@ export async function changeBookingController(req: AuthenticatedRequest, res: Re
     try {
         console.log("changeBookingController");
         const bookingId = await bookingService.changeBookingService(userId, roomId);
-        return res.status(httpStatus.OK).send(bookingId);
+        return res.status(httpStatus.OK).send({ bookingId: bookingId.id });
     } catch (e) {
         if (e.message === 'FORBIDDEN') {
             //console.log("FORBIDDEN");
