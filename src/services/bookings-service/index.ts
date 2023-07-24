@@ -58,8 +58,9 @@ async function changeBookingService(userId: number, roomId: number) {
     //const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
     //const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
     const existBooking = await bookingRepository.viewBookingRepository(userId);
+    console.log("changeBookingService");
     if (existBooking === null) {
-        console.log("3");
+        //console.log("3");
         throw Error("FORBIDDEN");
     }
 

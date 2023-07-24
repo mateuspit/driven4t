@@ -35,10 +35,12 @@ export async function changeBookingController(req: AuthenticatedRequest, res: Re
     const { userId } = req;
     const { roomId } = req.body;
     try {
+        console.log("changeBookingController");
         const bookingId = await bookingService.changeBookingService(userId, roomId);
         return res.status(httpStatus.OK).send(bookingId);
     } catch (e) {
-        if (e.message === 'FORBIDDEND') {
+        if (e.message === 'FORBIDDEN') {
+            //console.log("FORBIDDEN");
             return res.sendStatus(httpStatus.FORBIDDEN);
         }
     }
