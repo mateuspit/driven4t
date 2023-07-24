@@ -201,12 +201,25 @@ describe('PUT /booking/:bookingId', () => {
     //});
 
     it('Retorna status 403 se o novo quarto não tem vagas?', async () => {
-        const userWithoutSession = await createUser();
-        const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const enrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketTypeRemote();
+        await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+        //const hotel = await createHotel();
+        const hotel = await createHotel();
+        const room = await createRoom(hotel.id);
+        const body = { roomId: room.id };
+        await createBookingWithoutCapacity(user.id, body.roomId, room.capacity)
+        //await createBooking(user.id, body.roomId, room.capacity)
 
-        const response = await server.get('/hotels/1').set('Authorization', `Bearer ${token}`);
 
-        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+        const response = (await server
+            .put('/booking/1')
+            .set('Authorization', `Bearer ${token}`)
+            .send(body));
+
+        expect(response.status).toBe(httpStatus.FORBIDDEN);
     });
 
     //it('Retorna 404 se o quarto não existe?', async () => {
