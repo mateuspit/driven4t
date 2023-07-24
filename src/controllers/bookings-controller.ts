@@ -34,14 +34,18 @@ export async function makeBookingController(req: AuthenticatedRequest, res: Resp
 export async function changeBookingController(req: AuthenticatedRequest, res: Response) {
     const { userId } = req;
     const { roomId } = req.body;
+
     try {
-        console.log("changeBookingController");
+        //console.log("changeBookingController");
+        //console.log("roomId", roomId);
         const bookingId = await bookingService.changeBookingService(userId, roomId);
         return res.status(httpStatus.OK).send({ bookingId: bookingId.id });
     } catch (e) {
         if (e.message === 'FORBIDDEN') {
-            //console.log("FORBIDDEN");
             return res.sendStatus(httpStatus.FORBIDDEN);
+        }
+        if (e.name === 'NotFoundError') {
+            return res.sendStatus(httpStatus.NOT_FOUND);
         }
     }
 }

@@ -47,9 +47,9 @@ async function makeBookingService(userId: number, roomId: number) {
         throw Error("FORBIDDEN");
     }
 
-    console.log("bookingId:");
+    //console.log("bookingId:");
     const bookingId = await bookingRepository.makeBookingRepository(roomId, userId);
-    console.log("bookingId:", bookingId);
+    //console.log("bookingId:", bookingId);
 
     return bookingId;
 }
@@ -58,22 +58,22 @@ async function changeBookingService(userId: number, roomId: number) {
     //const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
     //const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
     const existBooking = await bookingRepository.viewBookingRepository(userId);
-    console.log("changeBookingService");
+    //console.log("changeBookingService,roomId", roomId);
     if (existBooking === null) {
-        console.log("1");
+        //console.log("1");
         throw Error("FORBIDDEN");
     }
-    console.log("roomId", roomId);
+    //console.log("roomId", roomId);
     const roomExists = await roomExistsFunc(roomId);
-    console.log("nope", roomExists);
-    if (!roomExists || roomExists.id === null) {
-        console.log("nope", roomExists);
+    //console.log("nopetest", roomExists);
+    if (!roomExists || roomExists.id === null || roomExists === null) {
+        //console.log("CAIU NO ERRO", roomExists);
         throw notFoundError();
     }
 
     const capacityExists = await capacityExistsFunc(roomId);
     if (!capacityExists) {
-        console.log("4");
+        //console.log("4");
         throw Error("FORBIDDEN");
     }
 
@@ -89,7 +89,7 @@ export default {
 };
 
 async function roomExistsFunc(roomId: number) {
-    console.log("roomexistfunc,roomid", roomId);
+    //console.log("roomexistfunc,roomid", roomId);
     return await bookingRepository.roomExistsRepository(roomId);
 }
 
