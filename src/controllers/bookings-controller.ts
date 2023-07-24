@@ -20,7 +20,7 @@ export async function makeBookingController(req: AuthenticatedRequest, res: Resp
     const { roomId } = req.body;
     try {
         const bookingId = await bookingService.makeBookingService(userId, roomId);
-        return res.status(httpStatus.OK).send(bookingId);
+        return res.status(httpStatus.OK).send({ bookingId: bookingId.id });
     } catch (e) {
         if (e.message === 'FORBIDDEN') {
             return res.sendStatus(httpStatus.FORBIDDEN);

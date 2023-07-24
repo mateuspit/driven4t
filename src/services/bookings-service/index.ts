@@ -12,6 +12,7 @@ async function viewBookingService(userId: number) {
 }
 
 async function makeBookingService(userId: number, roomId: number) {
+    //console.log("makeBookingService");
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
     //console.log("makeBookingService:enrollment");
     const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
@@ -24,23 +25,31 @@ async function makeBookingService(userId: number, roomId: number) {
         //console.log("ticket.status",ticket.status!=='PAID');
         //console.log("ticket.isRemote",!!ticket.TicketType.isRemote);
         //console.log("ticket.includesHotel",!ticket.TicketType.includesHotel);
+        //console.log("1ticket:", ticket);
         throw Error("FORBIDDEN");
     }
 
     const roomExists = await roomExistsFunc(roomId);
+    //console.log("roomExists");
     if (!roomExists || roomExists.id === null) {
+        //console.log("roomExists: sim");
         throw notFoundError();
     }
+    //console.log("roomExists: nou");
+
 
 
     const capacityExists = await capacityExistsFunc(roomId);
     //console.log("capacityExists", capacityExists)
     if (!capacityExists) {
         //console.log("capacityExists:error", capacityExists)
+        //console.log("2capacityExists:", capacityExists);
         throw Error("FORBIDDEN");
     }
 
+    console.log("bookingId:");
     const bookingId = await bookingRepository.makeBookingRepository(roomId, userId);
+    console.log("bookingId:", bookingId);
 
     return bookingId;
 }
@@ -50,16 +59,20 @@ async function changeBookingService(userId: number, roomId: number) {
     //const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
     const existBooking = await bookingRepository.viewBookingRepository(userId);
     if (existBooking === null) {
+        console.log("3");
         throw Error("FORBIDDEN");
     }
 
     const roomExists = await roomExistsFunc(roomId);
+    console.log("nope", roomExists);
     if (!roomExists || roomExists.id === null) {
+        console.log("nope", roomExists);
         throw notFoundError();
     }
 
     const capacityExists = await capacityExistsFunc(roomId);
     if (!capacityExists) {
+        console.log("4");
         throw Error("FORBIDDEN");
     }
 

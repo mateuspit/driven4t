@@ -64,3 +64,11 @@ export async function createBookingWithoutCapacity(userId: number, roomId: numbe
         });
     }
 }
+
+export async function searchingHowManyRooms(roomId: number) {
+    return await prisma.booking.count({
+        where: {
+            roomId,
+        },
+    });
+}

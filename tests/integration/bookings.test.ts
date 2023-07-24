@@ -17,7 +17,8 @@ import {
     createRoom,
     createBookingData,
     createBooking,
-    createBookingWithoutCapacity
+    createBookingWithoutCapacity,
+    searchingHowManyRooms
 } from '../factories';
 import app, { init } from '@/app';
 
@@ -127,14 +128,15 @@ describe('POST /booking', () => {
         await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
         const hotel = await createHotel();
         const room = await createRoom(hotel.id);
+        const body = { roomId: room.id };
         //await createBooking(user.id, room.id);
-        await createBookingWithoutCapacity(user.id, room.id, room.capacity)
+        await createBookingWithoutCapacity(user.id, body.roomId, room.capacity)
 
         const response = await server.post('/booking').set('Authorization', `Bearer ${token}`);
 
 
         expect(response.status).toBe(httpStatus.FORBIDDEN);
-    });//donee
+    });//done
 
     //it('Retorna status 404 se o quarto não existe?', async () => {
     //    const user = await createUser();
@@ -144,22 +146,34 @@ describe('POST /booking', () => {
     //    await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
     //    const hotel = await createHotel();
     //    const room = await createRoom(hotel.id);
-    //    //await createBooking(user.id, room.id);
-    //    await createBookingWithoutCapacity(user.id, room.id, room.capacity)
+    //    const body = { roomId: room.id };
+    //    const roomsNumber = await searchingHowManyRooms((body.roomId + 1));
+    //    //await createBookingWithoutCapacity(user.id, room.id, room.capacity)
+    //    await createBooking(user.id, room.id);
+
 
     //    const response = await server.post('/booking').set('Authorization', `Bearer ${token}`);
 
-
+    //    expect(roomsNumber).toBe(0);
     //    expect(response.status).toBe(httpStatus.FORBIDDEN);
     //});
 
     it('Retorna status 200 e o id da reserva no sucesso?', async () => {
-        const userWithoutSession = await createUser();
-        const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const enrollment = await createEnrollmentWithAddress(user);
+        const ticketType = await createTicketTypeWithHotel();
+        await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+        const hotel = await createHotel();
+        const room = await createRoom(hotel.id);
+        const body = { roomId: room.id };
+        //await createBooking(user.id, body.roomId, room.capacity)
 
-        const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
-
-        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+        const response = await server.post('/booking').set('Authorization', `Bearer ${token}`);
+        expect(response.body).toEqual({
+            bookingId: expect.any(Number),
+        });
+        expect(response.status).toBe(httpStatus.OK);
     });
 });
 
