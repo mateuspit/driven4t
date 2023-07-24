@@ -42,6 +42,7 @@ async function changeBookingRepository(roomId: number, userId: number) {
 
 async function roomExistsRepository(roomId: number) {
     const id = roomId;
+    console.log("roomexistrepository,id", id);
     return await prisma.room.findFirst({
         where: {
             id

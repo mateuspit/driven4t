@@ -60,10 +60,10 @@ async function changeBookingService(userId: number, roomId: number) {
     const existBooking = await bookingRepository.viewBookingRepository(userId);
     console.log("changeBookingService");
     if (existBooking === null) {
-        //console.log("3");
+        console.log("1");
         throw Error("FORBIDDEN");
     }
-
+    console.log("roomId", roomId);
     const roomExists = await roomExistsFunc(roomId);
     console.log("nope", roomExists);
     if (!roomExists || roomExists.id === null) {
@@ -89,6 +89,7 @@ export default {
 };
 
 async function roomExistsFunc(roomId: number) {
+    console.log("roomexistfunc,roomid", roomId);
     return await bookingRepository.roomExistsRepository(roomId);
 }
 
